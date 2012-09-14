@@ -1,0 +1,19 @@
+#!/bin/bash
+SCRIPT=`basename $0`
+networksetup -listallnetworkservices  | tail -n +2 | sed 's/^\*//' | tr '\n' '\0' | xargs -L 1 -J % -0 sudo networksetup -setnetworkserviceenabled % off
+if [ "$1" = "wifi" ]; then
+    NET='Wi-Fi'
+else
+    NET='Display Ethernet'
+fi
+sudo networksetup -setnetworkserviceenabled  "$NET" on
+for i in `seq 10`; do
+    IPADDR=`networksetup -getinfo "$NET" | grep "^IP address: " | sed "s/IP address: //"`
+    IPADDRLEN=`python -c "print len(\"$IPADDR\")"`
+    [ $IPADDRLEN -eq 0 ] || break 
+    sleep 5
+done
+echo $IPADDRLEN
+/Applications/terminal-notifier.app/Contents/MacOS/terminal-notifier -remove "$SCRIPT"
+/Applications/terminal-notifier.app/Contents/MacOS/terminal-notifier -title "$SCRIPT" -message "$NET: $IPADDR" -group "$SCRIPT"
+
