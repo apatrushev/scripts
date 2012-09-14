@@ -13,7 +13,6 @@ for i in `seq 10`; do
     [ $IPADDRLEN -eq 0 ] || break 
     sleep 5
 done
-echo $IPADDRLEN
 /Applications/terminal-notifier.app/Contents/MacOS/terminal-notifier -remove "$SCRIPT"
 /Applications/terminal-notifier.app/Contents/MacOS/terminal-notifier -title "$SCRIPT" -message "$NET: $IPADDR" -group "$SCRIPT"
 
